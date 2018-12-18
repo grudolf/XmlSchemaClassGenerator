@@ -125,6 +125,11 @@ namespace XmlSchemaClassGenerator
         /// Generate interfaces for groups and attribute groups
         /// </summary>
         public bool GenerateInterfaces { get; set; }
+
+        /// <summary>
+        /// Generate <see cref="System.Runtime.Serialization.DataContract"/> and <see cref="System.Runtime.Serialization.DataMember"/> attributes.
+        /// </summary>
+        public bool GenerateDataMember { get; set; } = true;
         /// <summary>
         /// Generate <see cref="System.ComponentModel.DescriptionAttribute"/> from XML comments.
         /// </summary>

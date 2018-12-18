@@ -7,6 +7,7 @@ using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Diagnostics;
 using System.Linq;
+using System.Runtime.Serialization;
 using System.Text.RegularExpressions;
 using System.Xml;
 using System.Xml.Schema;
@@ -45,6 +46,10 @@ namespace XmlSchemaClassGenerator
             {
                 codeNamespace.Imports.Add(new CodeNamespaceImport("System.Linq"));
                 codeNamespace.Imports.Add(new CodeNamespaceImport("System.ComponentModel"));
+            }
+            if (typeModels.OfType<ClassModel>().Any(x => x.Configuration.GenerateDataMember))
+            {
+                codeNamespace.Imports.Add(new CodeNamespaceImport("System.Runtime.Serialization"));
             }
 
             foreach (var typeModel in typeModels)
@@ -167,6 +172,28 @@ namespace XmlSchemaClassGenerator
                     new CodeAttributeDeclaration(new CodeTypeReference(typeof(SerializableAttribute), Configuration.CodeTypeReferenceOptions));
                 typeDeclaration.CustomAttributes.Add(serializableAttribute);
             }
+
+            if (Configuration.GenerateDataMember)
+            {
+                //TODO: fix?
+                CodeAttributeDeclaration dataMemberAttribute;
+                if (RootElementName != null)
+                {
+                    dataMemberAttribute = new CodeAttributeDeclaration(
+                        new CodeTypeReference(typeof(DataContractAttribute), Configuration.CodeTypeReferenceOptions),
+                        new CodeAttributeArgument("Name", new CodePrimitiveExpression(RootElementName.Name)),
+                        new CodeAttributeArgument("Namespace", new CodePrimitiveExpression(RootElementName.Namespace)));
+                        //new CodeAttributeArgument("Name", new CodePrimitiveExpression(Name)),
+                        //new CodeAttributeArgument("Namespace", new CodePrimitiveExpression(XmlSchemaName.Namespace)));
+                }
+                else
+                {
+                    dataMemberAttribute = new CodeAttributeDeclaration(
+                        new CodeTypeReference(typeof(DataContractAttribute), Configuration.CodeTypeReferenceOptions));
+                }
+                typeDeclaration.CustomAttributes.Add(dataMemberAttribute);
+            }
+
         }
 
         public virtual CodeTypeReference GetReferenceFor(NamespaceModel referencingNamespace, bool collection = false, bool forInit = false, bool attribute = false)
@@ -960,6 +987,11 @@ namespace XmlSchemaClassGenerator
                 member.CustomAttributes.Add(notMappedAttribute);
             }
 
+            if (Configuration.GenerateDataMember)
+            {
+                member.CustomAttributes.Add(new CodeAttributeDeclaration(
+                    new CodeTypeReference(typeof(DataMemberAttribute), Configuration.CodeTypeReferenceOptions)));
+            }
             Configuration.MemberVisitor(member, this);
         }
 
