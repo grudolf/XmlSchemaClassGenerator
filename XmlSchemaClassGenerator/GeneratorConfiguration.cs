@@ -129,7 +129,7 @@ namespace XmlSchemaClassGenerator
         /// <summary>
         /// Generate <see cref="System.Runtime.Serialization.DataContract"/> and <see cref="System.Runtime.Serialization.DataMember"/> attributes.
         /// </summary>
-        public bool GenerateDataMember { get; set; } = true;
+        public bool GenerateDataMember { get; set; } = false;
         /// <summary>
         /// Generate <see cref="System.ComponentModel.DescriptionAttribute"/> from XML comments.
         /// </summary>

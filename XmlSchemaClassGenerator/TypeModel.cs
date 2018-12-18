@@ -759,7 +759,7 @@ namespace XmlSchemaClassGenerator
             var isNullableValueType = IsNullableValueType;
             var typeReference = TypeReference;
 
-            var requiresBackingField = withDataBinding || DefaultValue != null || IsCollection || isArray;
+            var requiresBackingField = withDataBinding || DefaultValue != null || IsCollection || isArray || true;
             var backingField = new CodeMemberField(typeReference, OwningType.GetUniqueFieldName(this))
             {
                 Attributes = MemberAttributes.Private
